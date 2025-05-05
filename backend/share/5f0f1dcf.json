@@ -6,7 +6,6 @@
     "percent": 100,
     "size": 158924584,
     "type": "application/x-msdownload",
-    "selected": false,
     "uploadDate": "2025-05-05",
     "url": "https://share-download.onmicrosoft.cn/2025-05-05/Trae-Setup-x64-1746434380617.exe",
     "response": {
@@ -14,6 +13,7 @@
       "Bucket": "s-bj-2220-share-1258813047",
       "Key": "2025-05-05/Trae-Setup-x64-1746434380617.exe",
       "ETag": "\"335977554898b446f373b5fa697b65d4-31\""
-    }
+    },
+    "selected": false
   }
 ]

@@ -1,0 +1,20 @@
+[
+  {
+    "uid": "vc-upload-1746433365763-2",
+    "name": "dracula-typora-theme-main.zip",
+    "status": "done",
+    "percent": 100,
+    "size": 2843885,
+    "type": "application/x-zip-compressed",
+    "uploadDate": "2025-05-05",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-05/dracula-typora-theme-main-1746433369107.zip",
+    "response": {
+      "ETag": "\"352c7cebec6ded177a5f010a1a406941\"",
+      "Location": "https://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com//2025-05-05/dracula-typora-theme-main-1746433369107.zip",
+      "key": "/2025-05-05/dracula-typora-theme-main-1746433369107.zip",
+      "Key": "/2025-05-05/dracula-typora-theme-main-1746433369107.zip",
+      "Bucket": "s-bj-2220-share-1258813047"
+    },
+    "selected": false
+  }
+]

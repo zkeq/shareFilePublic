@@ -36,6 +36,13 @@
         <p class="mt-4 text-gray-500">正在加载分享文件...</p>
       </div>
       <a-empty v-else description="未找到分享文件或链接已失效" />
+
+      <!-- 单文件预览 -->
+      <file-preview
+        v-if="fileList.length === 1"
+        :file="fileList[0]"
+        class="mt-6"
+      />
     </div>
   </div>
 </template>
@@ -47,6 +54,7 @@ import { message } from 'ant-design-vue'
 import { DownloadOutlined } from '@ant-design/icons-vue'
 import axios from 'axios'
 import FileListItem from '../components/FileListItem.vue'
+import FilePreview from '../components/FilePreview.vue'
 import { API } from '../config.js'
 
 const route = useRoute()
@@ -96,7 +104,7 @@ const fetchAllFileStats = async () => {
     const shareStatsResponse = await axios.get(API.getShareStats(hash))
     if (shareStatsResponse.data) {
       // 计算总的访问次数和下载次数（文件统计 + 分享链接统计）
-      viewCount.value = fileList.value.reduce((sum, file) => sum + (file.viewCount || 0), 0) + 
+      viewCount.value =  
         (shareStatsResponse.data.views || 0)
       downloadCount.value = fileList.value.reduce((sum, file) => sum + (file.downloadCount || 0), 0) + 
         (shareStatsResponse.data.downloads || 0)

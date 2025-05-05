@@ -1,0 +1,18 @@
+[
+  {
+    "uid": "vc-upload-1746433381746-2",
+    "name": "build-artifacts.zip",
+    "status": "done",
+    "percent": 100,
+    "size": 16190986,
+    "type": "application/x-zip-compressed",
+    "uploadDate": "2025-05-05",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-05/build-artifacts-1746433387485.zip",
+    "response": {
+      "Location": "http://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com/2025-05-05/build-artifacts-1746433387485.zip",
+      "Bucket": "s-bj-2220-share-1258813047",
+      "Key": "2025-05-05/build-artifacts-1746433387485.zip",
+      "ETag": "\"8554ad397d0887e10ba1c64797c0d6c2-4\""
+    }
+  }
+]

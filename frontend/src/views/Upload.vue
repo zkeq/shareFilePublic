@@ -7,10 +7,11 @@
         本工具存在的作用就是用来传输一些文件 可以代替U盘或者微信来使用 会很方便
       </p>
       <a-upload-dragger
-        v-model:fileList="fileList"
+        v-model:fileList="uploadingList"
         name="file"
         :multiple="true"
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        :customRequest="initS3Upload"
+        :showUploadList="true"
         @change="handleChange"
         @drop="handleDrop"
         class="w-full transition-all duration-300 hover:border-blue-400"
@@ -111,9 +112,9 @@
             </a-button>
           </div>
         </div>
-        <div v-if="fileListData.length" class="space-y-4">
+        <div v-if="fileList.length" class="space-y-4">
           <div 
-            v-for="file in fileListData" 
+            v-for="file in fileList" 
             :key="file.name" 
             class="flex items-center"
             @click="handleItemClick(file)"
@@ -138,118 +139,293 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+// 导入相关依赖
+import { ref, computed, onMounted, watch, onUnmounted, h } from 'vue';
+import { message, Modal } from 'ant-design-vue';
+import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
+import axios from 'axios';
+import CryptoJS from 'crypto-js';
+
+// 导入组件
 import { 
   InboxOutlined, 
   CheckSquareOutlined, 
   DownloadOutlined,
   ShareAltOutlined 
 } from '@ant-design/icons-vue';
-import { message, Upload } from 'ant-design-vue';
-import type { UploadChangeParam } from 'ant-design-vue';
 import StatCard from '../components/StatCard.vue';
 import FileListItem from '../components/FileListItem.vue';
+
+// 导入工具和配置
 import { API } from '../config.js';
-import axios from 'axios';
 import { formatFileSize } from '../utils/format';
 
-const fileList = ref([]);
+// 声明 AWS 全局变量
+declare const AWS: any;
 
-// 定义表格列
-const columns = [
-  {
-    title: '文件名',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '大小',
-    dataIndex: 'size',
-    key: 'size',
-    customRender: ({ text }: { text: number }) => {
-      return formatFileSize(text);
-    },
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    key: 'status',
-  },
-  {
-    title: '操作',
-    key: 'action',
-  },
-];
-
-const handleChange = (info: UploadChangeParam) => {
-  const status = info.file.status;
-  if (status !== 'uploading') {
-    console.log(info.file, info.fileList);
-  }
-  if (status === 'done') {
-    message.success(`${info.file.name} 文件上传成功`);
-  } else if (status === 'error') {
-    message.error(`${info.file.name} 文件上传失败`);
-  }
-};
-
-const handleDrop = (e: DragEvent) => {
-  console.log(e);
-};
-
-// 添加删除文件方法
-const handleDelete = (file: any) => {
-  fileList.value = fileList.value.filter(item => item.uid !== file.uid);
-  message.success('文件已删除');
-};
-
-// 添加全局状态控制
+// 状态定义
+const fileList = ref<any[]>([]); // 永久保存的文件列表
+const uploadingList = ref<any[]>([]); // 临时上传列表
+const isMultiSelect = ref(false);
 const showGlobal = ref({
   files: false,
   size: false
 });
 
-// 切换全局/个人数据显示
+// 从localStorage加载文件列表
+const loadFileList = () => {
+  try {
+    const savedFiles = localStorage.getItem('uploadedFiles');
+    if (savedFiles) {
+      fileList.value = JSON.parse(savedFiles);
+    }
+  } catch (error) {
+    console.error('加载文件列表失败:', error);
+  }
+};
+
+// 保存文件列表到localStorage
+const saveFileList = () => {
+  try {
+    // 创建一个不包含 selected 状态的文件列表副本
+    const cleanFileList = fileList.value.map(file => {
+      const cleanFile = { ...file };
+      delete cleanFile.selected;
+      return cleanFile;
+    });
+    localStorage.setItem('uploadedFiles', JSON.stringify(cleanFileList));
+  } catch (error) {
+    console.error('保存文件列表失败:', error);
+  }
+};
+
+// 监听文件列表变化
+watch(fileList, () => {
+  saveFileList();
+}, { deep: true });
+
+// 上传状态
+const uploadStatus = ref({
+  currentSpeed: 0,
+  averageSpeed: 0,
+  progress: 0,
+  isUploading: false
+});
+
+// 全局统计数据
+const globalStats = ref({
+  totalFiles: 0,
+  totalSize: "0 MB",
+  totalTraffic: "0 GB"
+});
+
+// 计算属性
+const selectedFiles = computed(() => fileList.value.filter(file => file.selected));
+
+const fileStats = computed(() => {
+  const totalSize = fileList.value.reduce((sum, file) => sum + (file.size || 0), 0);
+  return {
+    totalFiles: fileList.value.length,
+    totalSize: formatFileSize(totalSize),
+    uploadSpeed: uploadStatus.value.currentSpeed,
+    usedTraffic: 1.25
+  };
+});
+
+// 定义上传选项类型
+interface UploadOptions {
+  file: File;
+  onProgress?: (event: { percent: number }) => void;
+  onSuccess?: (response: any) => void;
+  onError?: (error: any) => void;
+}
+
+// S3上传相关方法
+const initS3Upload = async (options: any) => {
+  const file = options.file;
+  try {
+    // 更新上传列表状态
+    const uploadingFile = {
+      uid: file.uid,
+      name: file.name,
+      status: 'uploading',
+      percent: 0,
+      size: file.size,
+      type: file.type,
+      selected: false
+    };
+    
+    // 获取上传凭证
+    const response = await axios.post(API.getUploadToken);
+    const { Credentials, Buckets } = response.data;
+    
+    if (!Credentials || !Buckets || Buckets.length === 0) {
+      throw new Error('获取上传凭证失败');
+    }
+
+    const bucket = Buckets[0]; // 使用第一个 bucket
+
+    // 初始化S3实例
+    const s3 = new AWS.S3({
+      region: 'ap-beijing',
+      endpoint: bucket.s3Endpoint,
+      credentials: {
+        accessKeyId: Credentials.accessKeyId,
+        secretAccessKey: Credentials.secretAccessKey,
+        sessionToken: Credentials.sessionToken
+      },
+      params: {
+        Bucket: bucket.s3Bucket
+      }
+    });
+
+    // 生成当前日期作为文件夹路径
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const datePath = `/${year}-${month}-${day}`;
+
+    // 生成文件key，添加日期前缀，使用原始文件名+时间戳
+    const timestamp = new Date().getTime();
+    const originalName = file.name;
+    const fileNameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
+    const fileExt = originalName.substring(originalName.lastIndexOf('.')) || '';
+    const key = `${datePath}/${fileNameWithoutExt}-${timestamp}${fileExt}`;
+
+    // 记录上传开始时间
+    const startTime = new Date().getTime();
+    let lastTime = startTime;
+    let lastLoaded = 0;
+
+    // 开始上传
+    uploadStatus.value.isUploading = true;
+    const upload = s3.upload({
+      Key: key,
+      Body: file,
+      ContentType: file.type
+    });
+
+    // 监听上传进度
+    upload.on('httpUploadProgress', (evt: any) => {
+      const percent = ((evt.loaded * 100) / evt.total).toFixed(2);
+      const elapsedTime = (new Date().getTime() - startTime) / 1000;
+      const fromLastTime = (new Date().getTime() - lastTime) / 1000;
+
+      if (fromLastTime > 1) {
+        uploadStatus.value.currentSpeed = Number(((evt.loaded - lastLoaded) / fromLastTime / 1024 / 1024).toFixed(2));
+        lastLoaded = evt.loaded;
+        lastTime = new Date().getTime();
+      }
+
+      uploadStatus.value.averageSpeed = Number((evt.loaded / elapsedTime / 1024 / 1024).toFixed(2));
+      uploadStatus.value.progress = Number(percent);
+
+      // 调用进度回调
+      if (options.onProgress) {
+        options.onProgress({ percent: Number(percent) });
+      }
+    });
+
+    // 发送上传请求
+    const result = await upload.promise();
+    
+    // 上传成功，将文件添加到永久列表顶部
+    const newFile = {
+      uid: file.uid,
+      name: file.name,
+      status: 'done',
+      percent: 100,
+      size: file.size,
+      type: file.type,
+      selected: false,
+      uploadDate: new Date().toISOString().split('T')[0],
+      viewCount: 0,
+      downloadCount: 0,
+      url: `https://share-download.onmicrosoft.cn${key}`,
+      response: result
+    };
+    
+    fileList.value = [newFile, ...fileList.value];
+    message.success(`${file.name} 上传成功`);
+
+    // 获取新上传文件的统计数据
+    await fetchFileStats(newFile);
+
+    // 从临时上传列表中移除
+    uploadingList.value = uploadingList.value.filter(item => item.uid !== file.uid);
+
+    // 调用成功回调
+    if (options.onSuccess) {
+      options.onSuccess(result);
+    }
+
+    return result;
+  } catch (error: any) {
+    message.error(`上传失败: ${error.message}`);
+    
+    // 从临时上传列表中移除
+    uploadingList.value = uploadingList.value.filter(item => item.uid !== file.uid);
+
+    // 调用错误回调
+    if (options.onError) {
+      options.onError(error);
+    }
+    throw error;
+  } finally {
+    uploadStatus.value.isUploading = false;
+    uploadStatus.value.progress = 0;
+    uploadStatus.value.currentSpeed = 0;
+    uploadStatus.value.averageSpeed = 0;
+  }
+};
+
+// 文件上传相关方法
+const handleChange = (info: UploadChangeParam<any>) => {
+  const file = info.file;
+  
+  // 处理文件删除
+  if (file.status === 'removed') {
+    // 从临时上传列表中移除
+    uploadingList.value = uploadingList.value.filter(item => item.uid !== file.uid);
+    message.success('已取消上传');
+  }
+};
+
+const handleDrop = (e: DragEvent) => {
+  console.log('File dropped:', e);
+};
+
+const handleDelete = (file: any) => {
+  fileList.value = fileList.value.filter(item => item.uid !== file.uid);
+  saveFileList(); // 保存更新后的文件列表
+  message.success('文件已删除');
+};
+
+// 数据统计相关方法
 const toggleGlobal = (type: 'files' | 'size') => {
   showGlobal.value[type] = !showGlobal.value[type];
 };
 
-// 修改全站统计数据，从API获取
-const globalStats = ref({
-  totalFiles: 0,
-  totalSize: 0,
-  totalTraffic: 50  // 示例数据，单位GB
-});
-
-// 获取全站统计数据
 const fetchGlobalStats = async () => {
   try {
     const response = await axios.get(API.getBucketStats);
     if (response.data) {
       const data = response.data;
       
-      // 获取文件数量
       if (data.count?.data?.overall !== undefined) {
         globalStats.value.totalFiles = data.count.data.overall;
       }
       
-      // 获取存储大小
       if (data.storage?.data?.overall !== undefined) {
-        // 假设返回的大小单位为字节，转换为MB
-        globalStats.value.totalSize = data.storage.data.overall / (1024 * 1024);
+        globalStats.value.totalSize = formatFileSize(data.storage.data.overall);
       }
       
-      // 获取流量数据 - 计算所有日期数据的总和
       if (data.traffic?.data?.result) {
-        let totalTraffic = 0;
-        data.traffic.data.result.forEach(dayData => {
-          // 将每天的数据相加
-          if (dayData.data && dayData.data.length > 0) {
-            totalTraffic += dayData.data.reduce((sum, value) => sum + value, 0);
-          }
-        });
-        // 转换为GB
-        globalStats.value.totalTraffic = totalTraffic / (1024 * 1024 * 1024);
+        const totalTraffic = data.traffic.data.result.reduce((total, dayData) => {
+          return total + (dayData.data?.reduce((sum, value) => sum + value, 0) || 0);
+        }, 0);
+        globalStats.value.totalTraffic = formatFileSize(totalTraffic);
       }
     }
   } catch (error) {
@@ -258,57 +434,21 @@ const fetchGlobalStats = async () => {
   }
 };
 
-// 组件挂载时获取数据
-onMounted(() => {
-  fetchGlobalStats();
-});
-
-// 修改文件统计数据计算
-const fileStats = computed(() => {
-  let totalSize = 0;
-  fileList.value.forEach(file => {
-    totalSize += file.size || 0;
-  });
-  
-  return {
-    totalFiles: fileList.value.length,
-    totalSize: formatFileSize(totalSize), // 使用新的格式化函数
-    uploadSpeed: 5.7,
-    usedTraffic: 1.25
-  };
-});
-// 添加多选相关状态
-const isMultiSelect = ref(false);
-
-// 修改文件列表数据结构，添加selected属性
-const fileListData = ref([
-  {
-    name: '示例文件.pdf',
-    size: 1024 * 1024 * 2.5,
-    uploadDate: '2024-01-20',
-    type: 'PDF文档',
-    viewCount: 10,
-    downloadCount: 5,
-    url: 'https://example.com/file.pdf',
-    selected: false
-  }
-]);
-
-// 计算已选择的文件
-const selectedFiles = computed(() => {
-  return fileListData.value.filter(file => file.selected);
-});
-
-// 切换多选模式
+// 多选相关方法
 const toggleMultiSelect = () => {
   isMultiSelect.value = !isMultiSelect.value;
   if (!isMultiSelect.value) {
-    // 退出多选模式时清除所有选择
-    fileListData.value.forEach(file => file.selected = false);
+    fileList.value.forEach(file => file.selected = false);
   }
 };
 
-// 批量下载文件
+const handleItemClick = (file: any) => {
+  if (isMultiSelect.value) {
+    file.selected = !file.selected;
+  }
+};
+
+// 批量操作方法
 const batchDownload = () => {
   const selectedUrls = selectedFiles.value.map(file => file.url);
   if (selectedUrls.length === 0) {
@@ -316,31 +456,135 @@ const batchDownload = () => {
     return;
   }
   
-  // 这里实现批量下载逻辑
-  selectedUrls.forEach(url => {
-    window.open(url);
-  });
+  selectedUrls.forEach(url => window.open(url));
   message.success(`正在下载 ${selectedUrls.length} 个文件`);
 };
 
-// 处理列表项点击
-const handleItemClick = (file: any) => {
-  if (isMultiSelect.value) {
-    file.selected = !file.selected;
+// 获取单个文件的统计数据
+const fetchFileStats = async (file: any) => {
+  try {
+    // 创建一个干净的文件副本，移除统计数据
+    const cleanFile = JSON.parse(JSON.stringify(file));
+    delete cleanFile.downloadCount;
+    delete cleanFile.viewCount;
+
+    // 提交到服务器获取hash
+    const response = await axios.post(API.submitShareList, [cleanFile]);
+    const { hash } = response.data;
+    
+    // 获取统计数据
+    const statsResponse = await axios.get(API.getShareStats(hash));
+    if (statsResponse.data) {
+      // 更新文件的统计数据
+      const index = fileList.value.findIndex(f => f.uid === file.uid);
+      if (index > -1) {
+        fileList.value[index] = {
+          ...fileList.value[index],
+          viewCount: statsResponse.data.views || 0,
+          downloadCount: statsResponse.data.downloads || 0
+        };
+      }
+    }
+  } catch (error) {
+    console.error('获取文件统计失败:', error);
   }
 };
 
-// 批量分享文件
-const batchShare = () => {
-  const selectedUrls = selectedFiles.value.map(file => file.url);
-  if (selectedUrls.length === 0) {
+// 批量获取文件统计数据
+const fetchAllFileStats = async () => {
+  const promises = fileList.value.map(file => fetchFileStats(file));
+  await Promise.allSettled(promises);
+};
+
+// 批量分享
+const batchShare = async () => {
+  if (selectedFiles.value.length === 0) {
     message.warning('请先选择要分享的文件');
     return;
   }
-  
-  // 这里实现批量分享逻辑
-  message.success(`已选择 ${selectedUrls.length} 个文件进行分享`);
+
+  try {
+    // 创建一个干净的文件列表副本，移除统计数据
+    const filesToShare = selectedFiles.value.map(file => {
+      const cleanFile = JSON.parse(JSON.stringify(file));
+      delete cleanFile.viewCount;
+      delete cleanFile.downloadCount;
+      return cleanFile;
+    });
+
+    // 提交分享请求
+    const response = await axios.post(API.submitShareList, filesToShare);
+    const { hash } = response.data;
+    
+    // 构建分享链接
+    const shareLink = `${window.location.origin}/share/${hash}`;
+
+    // 显示分享成功弹窗
+    Modal.success({
+      title: '批量分享成功',
+      class: 'share-modal',
+      content: h('div', { class: 'py-2' }, [
+        h('p', { class: 'text-gray-600 mb-2 text-sm' }, [
+          h('span', '已成功分享 '),
+          h('span', { class: 'font-medium text-gray-800' }, selectedFiles.value.length),
+          h('span', ' 个文件')
+        ]),
+        h('div', { class: 'bg-gray-50 rounded px-3 py-2 border border-gray-100' }, [
+          h('code', { class: 'text-blue-600 text-sm break-all' }, shareLink)
+        ]),
+        h('div', { class: 'mt-3 text-gray-500 text-xs' }, [
+          '分享文件：',
+          h('div', { class: 'mt-1' },
+            selectedFiles.value.map(file => 
+              h('div', { class: 'truncate text-gray-600' }, `• ${file.name}`)
+            )
+          )
+        ]),
+      ]),
+      okText: '复制链接',
+      centered: true,
+      width: 480,
+      onOk: () => {
+        navigator.clipboard.writeText(shareLink);
+        message.success('链接已复制到剪贴板');
+      }
+    });
+
+    // 更新所有分享文件的统计数据
+    await Promise.all(filesToShare.map(file => fetchFileStats(file)));
+    
+    // 如果在多选模式下，可以选择是否退出多选模式
+    if (isMultiSelect.value) {
+      // 清除所有选择
+      fileList.value.forEach(file => file.selected = false);
+      isMultiSelect.value = false;
+    }
+  } catch (error) {
+    console.error('分享文件失败:', error);
+    message.error('批量分享失败，请稍后重试');
+  }
 };
+
+// 生命周期钩子
+onMounted(async () => {
+  loadFileList(); // 加载保存的文件列表
+  fetchGlobalStats();
+  await fetchAllFileStats(); // 获取所有文件的统计数据
+});
+
+// 定时更新统计数据
+let statsUpdateInterval: any = null;
+
+onMounted(() => {
+  // 每5分钟更新一次统计数据
+  statsUpdateInterval = setInterval(fetchAllFileStats, 5 * 60 * 1000);
+});
+
+onUnmounted(() => {
+  if (statsUpdateInterval) {
+    clearInterval(statsUpdateInterval);
+  }
+});
 </script>
 
 <style scoped>

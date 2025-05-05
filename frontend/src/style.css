@@ -2,3 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Share Modal Styles */
+.share-modal .ant-modal-content {
+  padding: 20px !important;
+}
+
+.share-modal .ant-modal-confirm-title {
+  margin-bottom: 16px !important;
+  font-size: 18px !important;
+}
+
+.share-modal .ant-modal-confirm-content {
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+}
+
+.share-modal .ant-modal-confirm-btns {
+  margin-top: 16px !important;
+  text-align: right !important;
+}
+

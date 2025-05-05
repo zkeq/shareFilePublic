@@ -17,8 +17,9 @@ def generate_hash() -> str:
 
 def save_share_list(share_list: List[Any]) -> str:
     """保存分享列表并返回哈希值"""
-    # 生成唯一的哈希值
-    hash_value = generate_hash()
+    # 将列表序列化为JSON字符串并计算MD5
+    json_str = json.dumps(share_list, ensure_ascii=False, sort_keys=True)
+    hash_value = hashlib.md5(json_str.encode()).hexdigest()[:8]
     
     # 构建文件路径
     file_path = os.path.join(SHARE_DIR, f"{hash_value}.json")

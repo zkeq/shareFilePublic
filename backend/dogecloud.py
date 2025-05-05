@@ -134,8 +134,8 @@ def get_share_bucket_stats():
         'traffic': get_share_bucket_traffic()
     }
     
-    # 将数据存入缓存，设置1小时过期时间
-    redis_client.setex(cache_key, 3600, json.dumps(stats))
+    # 将数据存入缓存，设置24小时过期时间
+    redis_client.setex(cache_key, 3600 * 24, json.dumps(stats))
     
     return stats
 

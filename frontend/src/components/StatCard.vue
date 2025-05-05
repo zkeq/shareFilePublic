@@ -32,8 +32,8 @@
             'text-orange-500': type === 'speed',
             'text-purple-500': type === 'traffic'
           }
-        ]">{{ value }}</span>
-        <span v-if="suffix" class="text-sm text-gray-500 ml-1">{{ suffix }}</span>
+        ]">{{ displayValue }}</span>
+        <span v-if="displaySuffix" class="text-sm text-gray-500 ml-1">{{ displaySuffix }}</span>
       </div>
     </div>
   </a-card>
@@ -80,5 +80,19 @@ const icon = computed(() => {
     traffic: CloudUploadOutlined
   };
   return iconMap[props.type];
+});
+
+const displayValue = computed(() => {
+  if (typeof props.value === 'string' && props.value.includes(' ')) {
+    return props.value.split(' ')[0];
+  }
+  return props.value;
+});
+
+const displaySuffix = computed(() => {
+  if (typeof props.value === 'string' && props.value.includes(' ')) {
+    return props.value.split(' ')[1];
+  }
+  return props.suffix;
 });
 </script>

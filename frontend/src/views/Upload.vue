@@ -138,7 +138,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { 
   InboxOutlined, 
   CheckSquareOutlined, 
@@ -149,6 +149,9 @@ import { message, Upload } from 'ant-design-vue';
 import type { UploadChangeParam } from 'ant-design-vue';
 import StatCard from '../components/StatCard.vue';
 import FileListItem from '../components/FileListItem.vue';
+import { API } from '../config.js';
+import axios from 'axios';
+import { formatFileSize } from '../utils/format';
 
 const fileList = ref([]);
 
@@ -177,15 +180,6 @@ const columns = [
     key: 'action',
   },
 ];
-
-// 格式化文件大小
-const formatFileSize = (bytes: number) => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-};
 
 const handleChange = (info: UploadChangeParam) => {
   const status = info.file.status;
@@ -220,11 +214,53 @@ const toggleGlobal = (type: 'files' | 'size') => {
   showGlobal.value[type] = !showGlobal.value[type];
 };
 
-// 模拟全站统计数据
+// 修改全站统计数据，从API获取
 const globalStats = ref({
-  totalFiles: 1000,    // 示例数据，实际应从后端获取
-  totalSize: 5000,     // 示例数据，单位MB
-  totalTraffic: 50     // 示例数据，单位GB
+  totalFiles: 0,
+  totalSize: 0,
+  totalTraffic: 50  // 示例数据，单位GB
+});
+
+// 获取全站统计数据
+const fetchGlobalStats = async () => {
+  try {
+    const response = await axios.get(API.getBucketStats);
+    if (response.data) {
+      const data = response.data;
+      
+      // 获取文件数量
+      if (data.count?.data?.overall !== undefined) {
+        globalStats.value.totalFiles = data.count.data.overall;
+      }
+      
+      // 获取存储大小
+      if (data.storage?.data?.overall !== undefined) {
+        // 假设返回的大小单位为字节，转换为MB
+        globalStats.value.totalSize = data.storage.data.overall / (1024 * 1024);
+      }
+      
+      // 获取流量数据 - 计算所有日期数据的总和
+      if (data.traffic?.data?.result) {
+        let totalTraffic = 0;
+        data.traffic.data.result.forEach(dayData => {
+          // 将每天的数据相加
+          if (dayData.data && dayData.data.length > 0) {
+            totalTraffic += dayData.data.reduce((sum, value) => sum + value, 0);
+          }
+        });
+        // 转换为GB
+        globalStats.value.totalTraffic = totalTraffic / (1024 * 1024 * 1024);
+      }
+    }
+  } catch (error) {
+    console.error('获取全站统计数据失败:', error);
+    message.error('获取全站统计数据失败');
+  }
+};
+
+// 组件挂载时获取数据
+onMounted(() => {
+  fetchGlobalStats();
 });
 
 // 修改文件统计数据计算
@@ -234,18 +270,13 @@ const fileStats = computed(() => {
     totalSize += file.size || 0;
   });
   
-  // 转换为MB
-  const totalSizeMB = totalSize / (1024 * 1024);
-  
   return {
     totalFiles: fileList.value.length,
-    totalSize: totalSizeMB,
-    uploadSpeed: 5.7, // 示例数据，实际应根据上传速度计算
-    usedTraffic: 1.25 // 示例数据，实际应累计已上传的流量
+    totalSize: formatFileSize(totalSize), // 使用新的格式化函数
+    uploadSpeed: 5.7,
+    usedTraffic: 1.25
   };
 });
-  
-// 添加文件列表数据
 // 添加多选相关状态
 const isMultiSelect = ref(false);
 

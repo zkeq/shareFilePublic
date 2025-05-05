@@ -76,6 +76,7 @@ import {
   EyeOutlined
 } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
+import { formatFileSize } from '../utils/format';
 
 interface FileItem {
   name: string;
@@ -90,14 +91,6 @@ interface FileItem {
 const props = defineProps<{
   file: FileItem;
 }>();
-
-const formatFileSize = (bytes: number) => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-};
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('zh-CN');

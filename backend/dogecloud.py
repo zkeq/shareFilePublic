@@ -2,6 +2,7 @@
 import requests
 import redis
 import datetime
+import os
 
 from hashlib import sha1
 import hmac
@@ -15,8 +16,11 @@ def dogecloud_api(api_path, data, json_mode=False):
 
     # 这里替换为你的多吉云永久 AccessKey 和 SecretKey，可在用户中心 - 密钥管理中查看
     # 请勿在客户端暴露 AccessKey 和 SecretKey，否则恶意用户将获得账号完全控制权
-    access_key = '***REMOVED***'
-    secret_key = '***REMOVED***'
+    access_key = os.environ.get('DOGECLOUD_ACCESS_KEY')
+    secret_key = os.environ.get('DOGECLOUD_SECRET_KEY')
+    
+    if not access_key or not secret_key:
+        raise ValueError("缺少多吉云API凭证，请设置环境变量DOGECLOUD_ACCESS_KEY和DOGECLOUD_SECRET_KEY")
 
     body = ''
     mime = ''

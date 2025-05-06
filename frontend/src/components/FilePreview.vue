@@ -26,6 +26,11 @@
       ></iframe>
     </div>
 
+    <!-- Audio Preview -->
+    <div v-else-if="isAudio" class="aspect-[4/3]">
+      <div id="aplayer"></div>
+    </div>
+
     <!-- Unsupported Format -->
     <div v-else class="text-center py-8">
       <p class="text-gray-500">该文件格式暂不支持预览</p>
@@ -37,6 +42,8 @@
 import { ref, onMounted, watch, computed, nextTick, onBeforeUnmount } from 'vue'
 // @ts-ignore
 import DPlayer from 'dplayer'
+// @ts-ignore
+import APlayer from 'aplayer'
 
 const props = defineProps<{
   file: {
@@ -50,6 +57,11 @@ const props = defineProps<{
 const isImage = computed(() => {
   const ext = props.file.name.toLowerCase().split('.').pop()
   return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '')
+})
+
+const isAudio = computed(() => {
+  const ext = props.file.name.toLowerCase().split('.').pop()
+  return ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'flac', 'wma', 'ape', 'opus', 'mid', 'midi', 'amr', 'm4r', '3gp', 'aa', 'aax', 'aiff', 'alac', 'ac3', 'dsf', 'dff'].includes(ext || '')
 })
 
 const isVideo = computed(() => {
@@ -67,13 +79,14 @@ const isPdf = computed(() => {
   return ext === 'pdf'
 })
 
-// Video player instance
-let player: any = null
+// Media player instances
+let videoPlayer: any = null
+let audioPlayer: any = null
 
 // Initialize video player
 const initVideoPlayer = () => {
   if (isVideo.value && props.file.url) {
-    player = new DPlayer({
+    videoPlayer = new DPlayer({
       container: document.getElementById('dplayer'),
       video: {
         url: props.file.url,
@@ -83,11 +96,33 @@ const initVideoPlayer = () => {
   }
 }
 
+// Initialize audio player
+const initAudioPlayer = () => {
+  if (isAudio.value && props.file.url) {
+    audioPlayer = new APlayer({
+      container: document.getElementById('aplayer'),
+      audio: [{
+        name: props.file.name,
+        url: props.file.url,
+      }],
+      autoplay: false,
+    })
+  }
+}
+
 // Clean up video player
 const destroyVideoPlayer = () => {
-  if (player) {
-    player.destroy()
-    player = null
+  if (videoPlayer) {
+    videoPlayer.destroy()
+    videoPlayer = null
+  }
+}
+
+// Clean up audio player
+const destroyAudioPlayer = () => {
+  if (audioPlayer) {
+    audioPlayer.destroy()
+    audioPlayer = null
   }
 }
 
@@ -96,9 +131,14 @@ watch(
   () => props.file,
   () => {
     destroyVideoPlayer()
+    destroyAudioPlayer()
     if (isVideo.value) {
       nextTick(() => {
         initVideoPlayer()
+      })
+    } else if (isAudio.value) {
+      nextTick(() => {
+        initAudioPlayer()
       })
     }
   },
@@ -108,10 +148,13 @@ watch(
 onMounted(() => {
   if (isVideo.value) {
     initVideoPlayer()
+  } else if (isAudio.value) {
+    initAudioPlayer()
   }
 })
 
 onBeforeUnmount(() => {
   destroyVideoPlayer()
+  destroyAudioPlayer()
 })
-</script> 
+</script>

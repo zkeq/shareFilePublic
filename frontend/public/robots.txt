@@ -1,0 +1,24 @@
+User-agent: *
+Disallow: /
+
+# 禁止所有搜索引擎爬虫访问
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: Sogou spider
+Disallow: /
+
+User-agent: 360Spider
+Disallow: /
+
+User-agent: YisouSpider
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /

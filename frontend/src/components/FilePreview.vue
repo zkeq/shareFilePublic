@@ -27,8 +27,8 @@
     </div>
 
     <!-- Audio Preview -->
-    <div v-else-if="isAudio" class="aspect-[4/3]">
-      <div id="aplayer"></div>
+    <div v-else-if="isAudio" class="w-full max-w-3xl mx-auto">
+      <div id="aplayer" class="rounded-lg shadow-sm"></div>
     </div>
 
     <!-- Unsupported Format -->
@@ -44,6 +44,7 @@ import { ref, onMounted, watch, computed, nextTick, onBeforeUnmount } from 'vue'
 import DPlayer from 'dplayer'
 // @ts-ignore
 import APlayer from 'aplayer'
+import 'aplayer/dist/APlayer.min.css'
 
 const props = defineProps<{
   file: {

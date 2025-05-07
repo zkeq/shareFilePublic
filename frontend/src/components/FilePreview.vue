@@ -67,7 +67,7 @@ const isAudio = computed(() => {
 
 const isVideo = computed(() => {
   const ext = props.file.name.toLowerCase().split('.').pop()
-  return ['mp4', 'webm', 'ogg'].includes(ext || '')
+  return ['mp4', 'webm', 'ogg', 'm3u8', 'flv', 'mov', 'm4v', 'avi', 'wmv', 'mkv', 'mpeg', 'mpg', '3gp', 'ts'].includes(ext || '')
 })
 
 const isOffice = computed(() => {
@@ -87,6 +87,12 @@ let audioPlayer: any = null
 // Initialize video player
 const initVideoPlayer = () => {
   if (isVideo.value && props.file.url) {
+    // Load VideoTogether script dynamically
+    const script = document.createElement('script')
+    script.src = 'https://jsd.onmicrosoft.cn/gh/VideoTogether/VideoTogether@latest/release/extension.website.user.js'
+    script.async = true
+    document.head.appendChild(script)
+
     videoPlayer = new DPlayer({
       container: document.getElementById('dplayer'),
       video: {
@@ -116,6 +122,11 @@ const destroyVideoPlayer = () => {
   if (videoPlayer) {
     videoPlayer.destroy()
     videoPlayer = null
+  }
+  // Remove VideoTogether script when destroying player
+  const script = document.querySelector('script[src*="VideoTogether"]')
+  if (script) {
+    script.remove()
   }
 }
 

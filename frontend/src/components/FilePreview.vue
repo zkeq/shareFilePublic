@@ -46,6 +46,16 @@ import DPlayer from 'dplayer'
 import APlayer from 'aplayer'
 import 'aplayer/dist/APlayer.min.css'
 
+// Declare VideoTogether extension type
+declare global {
+  interface Window {
+    videoTogetherExtension: {
+      CreateRoom: (roomName: string, password: string) => void;
+      JoinRoom: (roomName: string, password: string) => void;
+    }
+  }
+}
+
 const props = defineProps<{
   file: {
     name: string
@@ -91,6 +101,28 @@ const initVideoPlayer = () => {
     const script = document.createElement('script')
     script.src = 'https://jsd.onmicrosoft.cn/gh/VideoTogether/VideoTogether@latest/release/extension.website.user.js'
     script.async = true
+    script.onload = () => {
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const action = urlParams.get('action');
+      
+      // Generate room name and password based on file URL hash
+      const fileUrlHash = btoa(props.file.url).replace(/[/+=]/g, '').substring(0, 8);
+      const roomName = `sfp-${fileUrlHash}`;
+      const password = `password-${fileUrlHash}`;
+
+      // Handle room creation or joining based on URL parameter
+      if (action === 'create') {
+        window.videoTogetherExtension.CreateRoom(roomName, password);
+      } else if (action === 'join') {
+        window.videoTogetherExtension.JoinRoom(roomName, password);
+      }
+
+      // Remove action parameter from URL without page reload
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('action');
+      window.history.replaceState({}, '', newUrl.toString());
+    }
     document.head.appendChild(script)
 
     videoPlayer = new DPlayer({

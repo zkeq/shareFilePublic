@@ -111,12 +111,15 @@ const initVideoPlayer = () => {
       const roomName = `sfp-${fileUrlHash}`;
       const password = `password-${fileUrlHash}`;
 
+     
+     setTimeout(() => {
       // Handle room creation or joining based on URL parameter
       if (action === 'create') {
         window.videoTogetherExtension.CreateRoom(roomName, password);
       } else if (action === 'join') {
         window.videoTogetherExtension.JoinRoom(roomName, password);
       }
+     }, 1200)
 
       // Remove action parameter from URL without page reload
       const newUrl = new URL(window.location.href);

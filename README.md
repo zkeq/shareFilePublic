@@ -2,14 +2,6 @@
 
 Wiki：https://deepwiki.com/zkeq/shareFilePublic
 
-> - COS 前端直传进桶，2TB流量储备下载自用站
-> - 支持视频转码 + 一起看功能
-> 
-> - 网址：https://share.onmicrosoft.cn/
-> - 视频转码测试：https://share.onmicrosoft.cn/movie/2b3a6114ed2c62be
-> - 创建房间：https://share.onmicrosoft.cn/movie/2b3a6114ed2c62be?action=create
-> - 加入房间：https://share.onmicrosoft.cn/movie/2b3a6114ed2c62be?action=join
-
 一个基于多吉云的现代化文件分享平台，支持视频处理和在线预览功能。 （已支持视频转码+一起看功能）
 
 ## 项目概述

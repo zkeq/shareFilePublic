@@ -1,5 +1,7 @@
 # ShareFile Public
 
+Wiki：https://deepwiki.com/zkeq/shareFilePublic
+
 > - COS 前端直传进桶，2TB流量储备下载自用站
 > - 支持视频转码 + 一起看功能
 > 

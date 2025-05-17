@@ -6,7 +6,6 @@
     "percent": 100,
     "size": 55672963,
     "type": "audio/flac",
-    "selected": false,
     "uploadDate": "2025-05-17",
     "url": "https://share-download.onmicrosoft.cn/2025-05-17/允许部分艺术家先富起来 - 二手玫瑰-1747453519141.flac",
     "response": {
@@ -14,6 +13,7 @@
       "Bucket": "s-bj-2220-share-1258813047",
       "Key": "2025-05-17/允许部分艺术家先富起来 - 二手玫瑰-1747453519141.flac",
       "ETag": "\"4a9daece8148ce28dee8659cf5748dd5-11\""
-    }
+    },
+    "selected": false
   }
 ]

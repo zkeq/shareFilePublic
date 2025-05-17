@@ -1,0 +1,19 @@
+[
+  {
+    "uid": "vc-upload-1747456432276-5",
+    "name": "origin_kling_0_f8948efa1725886c.mp4",
+    "status": "done",
+    "percent": 100,
+    "size": 24354349,
+    "type": "video/mp4",
+    "selected": false,
+    "uploadDate": "2025-05-17",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-17/origin_kling_0_f8948efa1725886c-1747458868193.mp4",
+    "response": {
+      "Location": "http://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com/2025-05-17/origin_kling_0_f8948efa1725886c-1747458868193.mp4",
+      "Bucket": "s-bj-2220-share-1258813047",
+      "Key": "2025-05-17/origin_kling_0_f8948efa1725886c-1747458868193.mp4",
+      "ETag": "\"b6f875a6acaba275af6124a7c878a7f3-5\""
+    }
+  }
+]

@@ -6,7 +6,6 @@
     "percent": 100,
     "size": 2312873,
     "type": "application/x-apple-diskimage",
-    "selected": false,
     "uploadDate": "2025-05-17",
     "url": "https://share-download.onmicrosoft.cn/2025-05-17/IMYAI._0.2.7_x64-1747453238730.dmg",
     "response": {
@@ -15,6 +14,7 @@
       "key": "/2025-05-17/IMYAI._0.2.7_x64-1747453238730.dmg",
       "Key": "/2025-05-17/IMYAI._0.2.7_x64-1747453238730.dmg",
       "Bucket": "s-bj-2220-share-1258813047"
-    }
+    },
+    "selected": false
   }
 ]

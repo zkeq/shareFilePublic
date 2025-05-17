@@ -6,7 +6,6 @@
     "percent": 100,
     "size": 194419259,
     "type": "application/x-apple-diskimage",
-    "selected": false,
     "uploadDate": "2025-05-17",
     "url": "https://share-download.onmicrosoft.cn/2025-05-17/Trae-darwin-arm64-1747453351439.dmg",
     "response": {
@@ -14,6 +13,7 @@
       "Bucket": "s-bj-2220-share-1258813047",
       "Key": "2025-05-17/Trae-darwin-arm64-1747453351439.dmg",
       "ETag": "\"89934cf44fa012bf10248877aa459339-38\""
-    }
+    },
+    "selected": false
   }
 ]

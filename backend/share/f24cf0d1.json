@@ -6,7 +6,6 @@
     "percent": 100,
     "size": 63305824,
     "type": "audio/flac",
-    "selected": false,
     "uploadDate": "2025-05-17",
     "url": "https://share-download.onmicrosoft.cn/2025-05-17/此刻是不会再拥有的此刻了 - 房东的猫-1747453524842.flac",
     "response": {
@@ -14,6 +13,7 @@
       "Bucket": "s-bj-2220-share-1258813047",
       "Key": "2025-05-17/此刻是不会再拥有的此刻了 - 房东的猫-1747453524842.flac",
       "ETag": "\"5a6717ad16615c6789865633412072c3-13\""
-    }
+    },
+    "selected": false
   }
 ]

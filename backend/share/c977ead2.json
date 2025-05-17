@@ -6,7 +6,6 @@
     "percent": 100,
     "size": 71590058,
     "type": "audio/flac",
-    "selected": false,
     "uploadDate": "2025-05-17",
     "url": "https://share-download.onmicrosoft.cn/2025-05-17/荒野星 - 发光曲线 _ 宋冬野-1747453512180.flac",
     "response": {
@@ -14,6 +13,7 @@
       "Bucket": "s-bj-2220-share-1258813047",
       "Key": "2025-05-17/荒野星 - 发光曲线 _ 宋冬野-1747453512180.flac",
       "ETag": "\"1072d6f90d5d1cc25a2429c1d2e84b58-14\""
-    }
+    },
+    "selected": false
   }
 ]

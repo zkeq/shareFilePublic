@@ -1,0 +1,19 @@
+[
+  {
+    "uid": "vc-upload-1747456432276-2",
+    "name": "一个 - 温格华生.flac",
+    "status": "done",
+    "percent": 100,
+    "size": 42465332,
+    "type": "audio/flac",
+    "selected": false,
+    "uploadDate": "2025-05-17",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-17/一个 - 温格华生-1747457669160.flac",
+    "response": {
+      "Location": "http://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com/2025-05-17/一个 - 温格华生-1747457669160.flac",
+      "Bucket": "s-bj-2220-share-1258813047",
+      "Key": "2025-05-17/一个 - 温格华生-1747457669160.flac",
+      "ETag": "\"fead00f94b9437704ae6fa57373849ad-9\""
+    }
+  }
+]

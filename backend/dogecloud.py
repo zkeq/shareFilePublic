@@ -10,6 +10,9 @@ import requests
 import json
 import urllib
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import time
 
 def dogecloud_api(api_path, data, json_mode=False):

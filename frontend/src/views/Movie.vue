@@ -4,14 +4,14 @@
       <!-- Video Player -->
       <div class="aspect-video relative">
         <div id="player"></div>
-        <!-- Click to Start Overlay -->
-        <div v-if="!hasUserInteracted" 
+        <!-- Click to Start Overlay - Only show in watch together mode -->
+        <div v-if="!hasUserInteracted && isWatchTogether" 
              class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer"
              @click="handleUserInteraction">
           <div class="text-white text-center">
             <div class="text-4xl mb-2">▶</div>
             <p>点击开始播放视频</p>
-            <p class="text-sm opacity-80 mt-2">（需要点击才能启用一起看功能, 需要点击两次）</p>
+            <p class="text-sm opacity-80 mt-2">（需要点击才能启用一起看功能）</p>
           </div>
         </div>
       </div>
@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { message } from 'ant-design-vue'
 import axios from 'axios'
@@ -105,7 +105,7 @@ const initVideoTogether = () => {
       // Handle room creation or joining
       if (action === 'create') {
         window.videoTogetherExtension.CreateRoom(roomName, password)
-      } else {
+      } else if (action === 'join') {
         // Join room by default when no action is specified
         window.videoTogetherExtension.JoinRoom(roomName, password)
         // Check if room join was successful after 1 hour
@@ -128,8 +128,32 @@ const initVideoTogether = () => {
 // Handle user interaction
 const handleUserInteraction = () => {
   hasUserInteracted.value = true
-  initVideoTogether()
-  message.success('正在启用一起看功能...')
+  
+  // 只在 action=join 时初始化一起看功能
+  const urlParams = new URLSearchParams(window.location.search)
+  const action = urlParams.get('action')
+  
+  setTimeout(() => {
+      // Handle room creation or joining
+      if (action === 'create') {
+        window.videoTogetherExtension.CreateRoom(roomName, password)
+      } else if (action === 'join') {
+        // Join room by default when no action is specified
+        window.videoTogetherExtension.JoinRoom(roomName, password)
+        // Check if room join was successful after 1 hour
+        setTimeout(() => {
+          if (!window.videoTogetherExtension.roomName) {
+            message.warning('一起看功能加载超时，正在刷新页面...')
+            window.location.reload()
+          }
+        }, 3600)
+      }
+    }, 2400)
+
+    
+  if (action === 'join' || action === 'create') {
+    message.success('正在启用一起看功能...')
+  }
 }
 
 // Fetch and render announcement
@@ -156,10 +180,23 @@ const fetchAnnouncement = async () => {
   }
 }
 
+// 添加一个计算属性来判断是否是一起看模式
+const isWatchTogether = computed(() => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const action = urlParams.get('action')
+  return action === 'join' || action === 'create'
+})
+
 // Lifecycle hooks
 onMounted(() => {
   initPlayer()
   fetchAnnouncement()
+  initVideoTogether()
+  
+  // 如果不是一起看模式，直接设置 hasUserInteracted 为 true
+  if (!isWatchTogether.value) {
+    hasUserInteracted.value = true
+  }
 })
 
 onBeforeUnmount(() => {

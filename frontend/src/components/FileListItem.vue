@@ -8,24 +8,47 @@
         </h3>
       </div>
       <div class="flex space-x-2 justify-end shrink-0">
-        <a-button type="text" size="small" @click="copyLink" class="action-btn flex items-center !px-1 sm:!px-2">
-          <template #icon>
-            <link-outlined class="text-indigo-500 hover:text-indigo-600" />
-          </template>
-          <span class="hidden sm:inline">复制链接</span>
-        </a-button>
-        <a-button type="text" size="small" @click="downloadFile" class="action-btn flex items-center !px-1 sm:!px-2">
-          <template #icon>
-            <download-outlined class="text-green-500 hover:text-green-600" />
-          </template>
-          <span class="hidden sm:inline">下载</span>
-        </a-button>
-        <a-button type="text" size="small" @click="shareFile" class="action-btn flex items-center !px-1 sm:!px-2">
-          <template #icon>
-            <share-alt-outlined class="text-blue-500 hover:text-blue-600" />
-          </template>
-          <span class="hidden sm:inline">分享</span>
-        </a-button>
+        <!-- 主页模式显示所有按钮 -->
+        <template v-if="mode === 'home'">
+          <a-button type="text" size="small" @click="copyLink" class="action-btn flex items-center !px-1 sm:!px-2">
+            <template #icon>
+              <link-outlined class="text-indigo-500 hover:text-indigo-600" />
+            </template>
+            <span class="hidden sm:inline">复制链接</span>
+          </a-button>
+          <a-button type="text" size="small" @click="downloadFile" class="action-btn flex items-center !px-1 sm:!px-2">
+            <template #icon>
+              <download-outlined class="text-green-500 hover:text-green-600" />
+            </template>
+            <span class="hidden sm:inline">下载</span>
+          </a-button>
+          <a-button type="text" size="small" @click="shareFile" class="action-btn flex items-center !px-1 sm:!px-2">
+            <template #icon>
+              <share-alt-outlined class="text-blue-500 hover:text-blue-600" />
+            </template>
+            <span class="hidden sm:inline">分享</span>
+          </a-button>
+        </template>
+        <!-- 分享页模式显示所有按钮 -->
+        <template v-else>
+          <a-button type="text" size="small" @click="copyLink" class="action-btn flex items-center !px-1 sm:!px-2">
+            <template #icon>
+              <link-outlined class="text-indigo-500 hover:text-indigo-600" />
+            </template>
+          </a-button>
+          <a-button type="text" size="small" @click="downloadFile" class="action-btn flex items-center !px-1 sm:!px-2">
+            <template #icon>
+              <download-outlined class="text-green-500 hover:text-green-600" />
+            </template>
+            <span class="hidden sm:inline">下载</span>
+          </a-button>
+          <a-button type="text" size="small" @click="shareFile" class="action-btn flex items-center !px-1 sm:!px-2">
+            <template #icon>
+              <share-alt-outlined class="text-blue-500 hover:text-blue-600" />
+            </template>
+            <span class="hidden sm:inline">分享</span>
+          </a-button>
+        </template>
       </div>
     </div>
     
@@ -62,6 +85,12 @@
         <span class="truncate">下载 {{ file.downloadCount }} 次</span>
       </div>
     </div>
+
+    <!-- 视频详情组件 -->
+    <video-details
+      v-if="mode === 'home' && isVideoFile"
+      :video-url="file.url"
+    />
   </div>
 </template>
 
@@ -75,8 +104,9 @@ import {
   FileTextOutlined,
   EyeOutlined
 } from '@ant-design/icons-vue';
+import VideoDetails from './VideoDetails.vue';
 import { message, Modal } from 'ant-design-vue';
-import { h } from 'vue';
+import { h, computed } from 'vue';
 import { formatFileSize, formatMimeType } from '../utils/format';
 import axios from 'axios';
 import { API } from '../config';
@@ -93,9 +123,18 @@ interface FileItem {
 
 const props = defineProps<{
   file: FileItem;
+  mode?: 'home' | 'share'; // 显示模式：home-主页模式，share-分享页模式
 }>();
 
+// 设置默认值为分享页模式
+const mode = props.mode || 'share';
+
 const emit = defineEmits(['download']);
+
+// 判断是否为视频文件
+const isVideoFile = computed(() => {
+  return props.file.type.startsWith('video/');
+});
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('zh-CN');

@@ -1,0 +1,18 @@
+[
+  {
+    "uid": "vc-upload-1747456432276-3",
+    "name": "大风吹 - 草东没有派对.mp4",
+    "status": "done",
+    "percent": 100,
+    "size": 78642822,
+    "type": "video/mp4",
+    "uploadDate": "2025-05-17",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-17/大风吹 - 草东没有派对-1747457928800.mp4",
+    "response": {
+      "Location": "http://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com/2025-05-17/大风吹 - 草东没有派对-1747457928800.mp4",
+      "Bucket": "s-bj-2220-share-1258813047",
+      "Key": "2025-05-17/大风吹 - 草东没有派对-1747457928800.mp4",
+      "ETag": "\"e77a4944b0050b4161463f2cdb949993-15\""
+    }
+  }
+]

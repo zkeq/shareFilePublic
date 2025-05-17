@@ -81,6 +81,12 @@ def get_video_details(vcode: str):
     """获取视频详细信息"""
     return get_video_info(vcode)
 
+@app.post("/tasks/hash")
+def get_task_hash(task: VideoTask):
+    """计算视频URL的哈希值"""
+    from tasks import generate_task_hash
+    return {"hash": generate_task_hash(task.url)}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app='main:app', host="0.0.0.0", port=8000, reload=True)

@@ -132,6 +132,7 @@
             <file-list-item
               :file="file"
               :is-selectable="isMultiSelect"
+              mode="home"
             />
           </div>
         </div>

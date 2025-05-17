@@ -18,5 +18,13 @@ export const API = {
   // 增加访问量
   incrementViews: (hash) => `${baseURL}/share/views/${hash}`,
   // 增加下载量
-  incrementDownloads: (hash) => `${baseURL}/share/downloads/${hash}`
+  incrementDownloads: (hash) => `${baseURL}/share/downloads/${hash}`,
+  // 提交视频任务
+  submitVideoTask: `${baseURL}/tasks/submit`,
+  // 获取任务状态
+  getTaskStatus: (taskHash) => `${baseURL}/tasks/${taskHash}`,
+  // 获取视频详情
+  getVideoDetails: (vcode) => `${baseURL}/video/${vcode}`,
+  // 获取视频任务哈希值
+  getTaskHash: `${baseURL}/tasks/hash`
 };

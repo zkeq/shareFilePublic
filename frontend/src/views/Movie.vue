@@ -11,7 +11,7 @@
           <div class="text-white text-center">
             <div class="text-4xl mb-2">▶</div>
             <p>点击开始播放视频</p>
-            <p class="text-sm opacity-80 mt-2">（需要点击才能启用一起看功能）</p>
+            <p class="text-sm opacity-80 mt-2">（需要点击才能启用一起看功能, 需要点击两次）</p>
           </div>
         </div>
       </div>

@@ -304,6 +304,42 @@ const getNoticeInfo = async (vcode: string) => {
 
 // 处理公告提交
 const handleNoticeSubmit = async () => {
+  if (hasExistingNotice.value) {
+    await handleNoticeUpdate();
+    return;
+  }
+  if (!noticeForm.value.content.trim()) {
+    message.error('请输入公告内容');
+    return;
+  }
+
+  if (!noticeForm.value.password.trim()) {
+    message.error('请输入密码');
+    return;
+  }
+
+  isSubmittingNotice.value = true;
+  try {
+    const payload = {
+      content: noticeForm.value.content,
+      vcode: videoCode.value,
+      password: noticeForm.value.password
+    };
+
+    const api = hasExistingNotice.value ? API.updateNotice(videoCode.value) : API.createNotice;
+    const response = await axios.post(api, payload);
+    
+    message.success(hasExistingNotice.value ? '公告更新成功' : '公告发布成功');
+    playPageModalVisible.value = false;
+  } catch (error) {
+    message.error('操作失败，请检查密码是否正确');
+  } finally {
+    isSubmittingNotice.value = false;
+  }
+};
+
+// 处理公告提交
+const handleNoticeUpdate = async () => {
   if (!noticeForm.value.content.trim()) {
     message.error('请输入公告内容');
     return;

@@ -1,0 +1,18 @@
+[
+  {
+    "uid": "vc-upload-1746582373048-2",
+    "name": "22计6 11.17 周四例行学习互助会.mp4",
+    "status": "done",
+    "percent": 100,
+    "size": 528030365,
+    "type": "video/mp4",
+    "uploadDate": "2025-05-07",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-07/22计6 11.17 周四例行学习互助会-1746582384687.mp4",
+    "response": {
+      "Location": "http://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com/2025-05-07/22计6 11.17 周四例行学习互助会-1746582384687.mp4",
+      "Bucket": "s-bj-2220-share-1258813047",
+      "Key": "2025-05-07/22计6 11.17 周四例行学习互助会-1746582384687.mp4",
+      "ETag": "\"4d34d094e2ee2549cebdc337a5776d85-101\""
+    }
+  }
+]

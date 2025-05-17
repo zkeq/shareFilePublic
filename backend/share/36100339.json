@@ -1,0 +1,19 @@
+[
+  {
+    "uid": "vc-upload-1747467451170-2",
+    "name": "荒野机器人.1080p.HD中英双字.mp4",
+    "status": "done",
+    "percent": 100,
+    "size": 3096398131,
+    "type": "video/mp4",
+    "selected": false,
+    "uploadDate": "2025-05-17",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-17/荒野机器人.1080p.HD中英双字-1747467492035.mp4",
+    "response": {
+      "Location": "http://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com/2025-05-17/荒野机器人.1080p.HD中英双字-1747467492035.mp4",
+      "Bucket": "s-bj-2220-share-1258813047",
+      "Key": "2025-05-17/荒野机器人.1080p.HD中英双字-1747467492035.mp4",
+      "ETag": "\"fad4e6defaf352b5ed8f464b065400cd-591\""
+    }
+  }
+]

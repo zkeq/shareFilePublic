@@ -1,0 +1,18 @@
+[
+  {
+    "uid": "vc-upload-1746491128356-2",
+    "name": "西部故事 - 房东的猫.flac",
+    "status": "done",
+    "percent": 100,
+    "size": 47311074,
+    "type": "audio/flac",
+    "uploadDate": "2025-05-06",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-06/西部故事 - 房东的猫-1746491133511.flac",
+    "response": {
+      "Location": "http://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com/2025-05-06/西部故事 - 房东的猫-1746491133511.flac",
+      "Bucket": "s-bj-2220-share-1258813047",
+      "Key": "2025-05-06/西部故事 - 房东的猫-1746491133511.flac",
+      "ETag": "\"ae76e709505fe8df20ad99203b302d39-10\""
+    }
+  }
+]

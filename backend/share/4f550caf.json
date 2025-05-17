@@ -1,0 +1,19 @@
+[
+  {
+    "uid": "vc-upload-1747449884557-2",
+    "name": "vidu-general-4-2025-03-11T00_48_52Z.mp4",
+    "status": "done",
+    "percent": 100,
+    "size": 1293553,
+    "type": "video/mp4",
+    "uploadDate": "2025-05-17",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-17/vidu-general-4-2025-03-11T00_48_52Z-1747449957411.mp4",
+    "response": {
+      "ETag": "\"3121a4beb94a6095cc67bd919adacc8a\"",
+      "Location": "https://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com//2025-05-17/vidu-general-4-2025-03-11T00_48_52Z-1747449957411.mp4",
+      "key": "/2025-05-17/vidu-general-4-2025-03-11T00_48_52Z-1747449957411.mp4",
+      "Key": "/2025-05-17/vidu-general-4-2025-03-11T00_48_52Z-1747449957411.mp4",
+      "Bucket": "s-bj-2220-share-1258813047"
+    }
+  }
+]

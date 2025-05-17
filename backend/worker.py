@@ -61,14 +61,17 @@ def process_video_tasks():
                 print(f"任务 {task_hash} 当前状态: {task_status}")
                 
                 if task_status.get('status') == 'done':
-                    # 任务完成，更新状态
+                    # 任务完成，获取vcode
                     vcode = task_status.get('vcode')
                     print(f"任务 {task_hash} 完成，获取到的完整状态: {task_status}")
                     
                     if not vcode:
-                        print(f"警告：任务 {task_hash} 完成但vcode为空")
+                        print(f"警告：任务 {task_hash} 完成但vcode为空，继续等待...")
+                        time.sleep(5)
+                        continue
                     
-                    update_task_status(task_hash, vcode or '')
+                    # 只有在获取到有效的vcode时才更新状态并退出循环
+                    update_task_status(task_hash, vcode)
                     print(f"任务 {task_hash} 状态已更新，vcode: {vcode}")
                     break
                 elif task_status.get('status') == 'error':

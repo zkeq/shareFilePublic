@@ -1,0 +1,18 @@
+[
+  {
+    "uid": "vc-upload-1746493207607-2",
+    "name": "唯一 - 五月天 _ 告五人.flac",
+    "status": "done",
+    "percent": 100,
+    "size": 34113739,
+    "type": "audio/flac",
+    "uploadDate": "2025-05-06",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-06/唯一 - 五月天 _ 告五人-1746493263127.flac",
+    "response": {
+      "Location": "http://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com/2025-05-06/唯一 - 五月天 _ 告五人-1746493263127.flac",
+      "Bucket": "s-bj-2220-share-1258813047",
+      "Key": "2025-05-06/唯一 - 五月天 _ 告五人-1746493263127.flac",
+      "ETag": "\"bf4b223e2a492b67e1c3853e8076fb1f-7\""
+    }
+  }
+]

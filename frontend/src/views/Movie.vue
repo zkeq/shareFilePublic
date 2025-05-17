@@ -109,9 +109,15 @@ const initVideoTogether = () => {
       } else {
         // Join room by default when no action is specified
         window.videoTogetherExtension.JoinRoom(roomName, password)
+        // Check if room join was successful after 1 hour
+        setTimeout(() => {
+          if (!window.videoTogetherExtension.roomName) {
+            message.warning('一起看功能加载超时，正在刷新页面...')
+            window.location.reload()
+          }
+        }, 3600)
       }
     }, 2400)
-
     // Remove action parameter from URL
     const newUrl = new URL(window.location.href)
     newUrl.searchParams.delete('action')

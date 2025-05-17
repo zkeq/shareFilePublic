@@ -2,8 +2,18 @@
   <div class="flex flex-col items-center p-2 space-y-6 bg-[#f5f5f5] min-h-screen pt-10">
     <div class="max-w-[840px] w-full border border-gray-200 rounded-xl bg-white p-4 space-y-6">
       <!-- Video Player -->
-      <div class="aspect-video">
+      <div class="aspect-video relative">
         <div id="player"></div>
+        <!-- Click to Start Overlay -->
+        <div v-if="!hasUserInteracted" 
+             class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer"
+             @click="handleUserInteraction">
+          <div class="text-white text-center">
+            <div class="text-4xl mb-2">▶</div>
+            <p>点击开始播放视频</p>
+            <p class="text-sm opacity-80 mt-2">（需要点击才能启用一起看功能）</p>
+          </div>
+        </div>
       </div>
 
       <!-- Loading State -->
@@ -50,9 +60,10 @@ const loading = ref(true)
 const error = ref('')
 const announcement = ref('')
 const renderedAnnouncement = ref('')
+const hasUserInteracted = ref(false)
 let player: any = null
 
-// Initialize video player and VideoTogether
+// Initialize video player only
 const initPlayer = () => {
   const vcode = route.params.hash as string
   if (!vcode) {
@@ -61,6 +72,23 @@ const initPlayer = () => {
     return
   }
 
+  // Load DogePlayer script
+  const dogeScript = document.createElement('script')
+  dogeScript.src = 'https://player.dogecloud.com/js/loader'
+  dogeScript.onload = () => {
+    player = new window.DogePlayer({
+      container: document.getElementById('player'),
+      userId: 2220,
+      vcode: vcode
+    })
+  }
+  document.head.appendChild(dogeScript)
+}
+
+// Initialize VideoTogether after user interaction
+const initVideoTogether = () => {
+  const vcode = route.params.hash as string
+  
   // Load VideoTogether script
   const vtScript = document.createElement('script')
   vtScript.src = 'https://jsd.onmicrosoft.cn/gh/VideoTogether/VideoTogether@latest/release/extension.website.user.js'
@@ -90,18 +118,13 @@ const initPlayer = () => {
     window.history.replaceState({}, '', newUrl.toString())
   }
   document.head.appendChild(vtScript)
+}
 
-  // Load DogePlayer script
-  const dogeScript = document.createElement('script')
-  dogeScript.src = 'https://player.dogecloud.com/js/loader'
-  dogeScript.onload = () => {
-    player = new window.DogePlayer({
-      container: document.getElementById('player'),
-      userId: 2220,
-      vcode: vcode
-    })
-  }
-  document.head.appendChild(dogeScript)
+// Handle user interaction
+const handleUserInteraction = () => {
+  hasUserInteracted.value = true
+  initVideoTogether()
+  message.success('正在启用一起看功能...')
 }
 
 // Fetch and render announcement

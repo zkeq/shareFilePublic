@@ -1,0 +1,20 @@
+[
+  {
+    "uid": "vc-upload-1747453226003-2",
+    "name": "IMYAI._0.2.7_x64.dmg",
+    "status": "done",
+    "percent": 100,
+    "size": 2312873,
+    "type": "application/x-apple-diskimage",
+    "selected": false,
+    "uploadDate": "2025-05-17",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-17/IMYAI._0.2.7_x64-1747453238730.dmg",
+    "response": {
+      "ETag": "\"d244a4457b176ebe5a0284123387c3cd\"",
+      "Location": "https://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com//2025-05-17/IMYAI._0.2.7_x64-1747453238730.dmg",
+      "key": "/2025-05-17/IMYAI._0.2.7_x64-1747453238730.dmg",
+      "Key": "/2025-05-17/IMYAI._0.2.7_x64-1747453238730.dmg",
+      "Bucket": "s-bj-2220-share-1258813047"
+    }
+  }
+]

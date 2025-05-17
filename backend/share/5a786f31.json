@@ -1,0 +1,18 @@
+[
+  {
+    "uid": "vc-upload-1747453465960-3",
+    "name": "荒野星 - 发光曲线 _ 宋冬野.flac",
+    "status": "done",
+    "percent": 100,
+    "size": 71590058,
+    "type": "audio/flac",
+    "uploadDate": "2025-05-17",
+    "url": "https://share-download.onmicrosoft.cn/2025-05-17/荒野星 - 发光曲线 _ 宋冬野-1747453512180.flac",
+    "response": {
+      "Location": "http://s-bj-2220-share-1258813047.cos.ap-beijing.myqcloud.com/2025-05-17/荒野星 - 发光曲线 _ 宋冬野-1747453512180.flac",
+      "Bucket": "s-bj-2220-share-1258813047",
+      "Key": "2025-05-17/荒野星 - 发光曲线 _ 宋冬野-1747453512180.flac",
+      "ETag": "\"1072d6f90d5d1cc25a2429c1d2e84b58-14\""
+    }
+  }
+]

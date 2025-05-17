@@ -57,7 +57,7 @@
             type="speed" 
             title="当前上传速率" 
             :value="fileStats.uploadSpeed" 
-            :precision="1" 
+            :precision="2" 
             suffix="MB/s" 
           />
         </a-col>
@@ -217,7 +217,9 @@ const uploadStatus = ref({
   currentSpeed: 0,
   averageSpeed: 0,
   progress: 0,
-  isUploading: false
+  isUploading: false,
+  // 记录每个文件的上传速度
+  filesSpeeds: new Map()
 });
 
 // 全局统计数据
@@ -320,8 +322,11 @@ const initS3Upload = async (options: any) => {
       const elapsedTime = (new Date().getTime() - startTime) / 1000;
       const fromLastTime = (new Date().getTime() - lastTime) / 1000;
 
-      if (fromLastTime > 1) {
-        uploadStatus.value.currentSpeed = Number(((evt.loaded - lastLoaded) / fromLastTime / 1024 / 1024).toFixed(2));
+      if (fromLastTime > 2) { // 增加更新间隔到2秒
+        const fileSpeed = Number(((evt.loaded - lastLoaded) / fromLastTime / 1024 / 1024).toFixed(2));
+        uploadStatus.value.filesSpeeds.set(file.uid, fileSpeed);
+        // 计算所有正在上传文件的速度总和并保留两位小数
+        uploadStatus.value.currentSpeed = Number(Array.from(uploadStatus.value.filesSpeeds.values()).reduce((sum, speed) => sum + speed, 0).toFixed(2));
         lastLoaded = evt.loaded;
         lastTime = new Date().getTime();
       }
@@ -381,10 +386,16 @@ const initS3Upload = async (options: any) => {
     }
     throw error;
   } finally {
-    uploadStatus.value.isUploading = false;
+    // 从速度Map中移除当前文件
+    uploadStatus.value.filesSpeeds.delete(file.uid);
+    // 重新计算总速度
+    uploadStatus.value.currentSpeed = Array.from(uploadStatus.value.filesSpeeds.values()).reduce((sum, speed) => sum + speed, 0);
     uploadStatus.value.progress = 0;
-    uploadStatus.value.currentSpeed = 0;
     uploadStatus.value.averageSpeed = 0;
+    // 只有当没有文件在上传时才设置isUploading为false
+    if (uploadStatus.value.filesSpeeds.size === 0) {
+      uploadStatus.value.isUploading = false;
+    }
   }
 };
 

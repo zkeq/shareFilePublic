@@ -2,6 +2,32 @@
   <div class="flex flex-col items-center p-5 space-y-6 bg-[#f5f5f5] min-h-screen pt-10">
     <div class="max-w-[840px] w-full border border-gray-200 rounded-xl bg-white p-4 sm:p-6 space-y-4 sm:space-y-6">
       <h1 class="text-xl sm:text-2xl text-gray-800 text-center">Zkeq 和 Ta 的朋友们 的 文件分享服务站</h1>
+      
+      <!-- 添加使用说明部分 -->
+      <div class="bg-blue-50 rounded-lg p-4 text-sm space-y-2">
+        <h2 class="font-medium text-blue-700">网站使用说明：</h2>
+        <div class="text-blue-600">
+          <p class="mb-2">📤 <span class="font-medium">文件上传与分享：</span></p>
+          <ul class="list-disc list-inside pl-4 space-y-1">
+            <li>上传文件后，点击"分享"按钮可生成分享链接</li>
+            <li>点击"复制链接"可直接复制文件直链</li>
+            <li class="text-red-500 font-medium">注意：上传后文件不可删除，请谨慎上传！</li>
+          </ul>
+
+          <p class="mt-3 mb-2">🎥 <span class="font-medium">视频转码功能：</span></p>
+          <ul class="list-disc list-inside pl-4 space-y-1">
+            <li>上传视频文件后，点击右下角的"提交任务"按钮即可提交转码任务</li>
+            <li>转码完成后将自动生成播放页面</li>
+          </ul>
+
+          <p class="mt-3 mb-2">👥 <span class="font-medium">多人观看功能：</span></p>
+          <ul class="list-disc list-inside pl-4 space-y-1">
+            <li>在播放页URL后添加 <code class="bg-blue-100 px-1 rounded">?action=create</code> 可自动创建观看房间</li>
+            <li>在播放页URL后添加 <code class="bg-blue-100 px-1 rounded">?action=join</code> 可自动加入观看房间</li>
+          </ul>
+        </div>
+      </div>
+
       <p class="text-gray-600 text-xs sm:text-sm pb-2 sm:pb-4">
         <span class="text-blue-500">Tips：</span>
         本工具存在的作用就是用来传输一些文件 可以代替U盘或者微信来使用 会很方便

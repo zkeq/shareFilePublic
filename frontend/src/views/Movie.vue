@@ -29,7 +29,6 @@
 
       <!-- Announcement Section -->
       <div v-if="announcement && !loading" class="mt-6 markdown-body max-w-none">
-        <h2 class="text-xl font-bold mb-4">视频公告</h2>
         <div v-html="renderedAnnouncement"></div>
       </div>
     </div>

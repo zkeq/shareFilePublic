@@ -91,7 +91,7 @@ const initVideoTogether = () => {
   
   // Load VideoTogether script
   const vtScript = document.createElement('script')
-  vtScript.src = 'https://jsd.onmicrosoft.cn/gh/VideoTogether/VideoTogether@latest/release/extension.website.user.js'
+  vtScript.src = '/extension.website.user.js'
   vtScript.async = true
   vtScript.onload = () => {
     // Get URL parameters for room management

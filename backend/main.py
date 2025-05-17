@@ -5,6 +5,7 @@ from share import save_share_list, get_share_list
 from stats import get_stats as get_file_stats, increment_views, increment_downloads
 from tasks import submit_task, get_task_info, update_task_status
 from video import get_video_info
+from notice import save_notice, update_notice, get_notice
 from typing import Dict, Any, List
 from pydantic import BaseModel
 
@@ -86,6 +87,26 @@ def get_task_hash(task: VideoTask):
     """计算视频URL的哈希值"""
     from tasks import generate_task_hash
     return {"hash": generate_task_hash(task.url)}
+
+class NoticeCreate(BaseModel):
+    content: str
+    vcode: str
+    password: str
+
+@app.post("/notice")
+def create_notice(notice: NoticeCreate):
+    """创建视频公告"""
+    return save_notice(notice.vcode, notice.content, notice.password)
+
+@app.put("/notice/{vcode}")
+def update_video_notice(vcode: str, notice: NoticeCreate):
+    """更新视频公告"""
+    return update_notice(vcode, notice.content, notice.password)
+
+@app.get("/notice/{vcode}")
+def get_video_notice(vcode: str):
+    """获取视频公告"""
+    return get_notice(vcode)
 
 if __name__ == "__main__":
     import uvicorn

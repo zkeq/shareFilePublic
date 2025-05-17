@@ -26,5 +26,11 @@ export const API = {
   // 获取视频详情
   getVideoDetails: (vcode) => `${baseURL}/video/${vcode}`,
   // 获取视频任务哈希值
-  getTaskHash: `${baseURL}/tasks/hash`
+  getTaskHash: `${baseURL}/tasks/hash`,
+  // 创建视频公告
+  createNotice: `${baseURL}/notice`,
+  // 更新视频公告
+  updateNotice: (vcode) => `${baseURL}/notice/${vcode}`,
+  // 获取视频公告
+  getNotice: (vcode) => `${baseURL}/notice/${vcode}`
 };

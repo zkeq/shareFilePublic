@@ -92,6 +92,48 @@
       </div>
     </div>
   </div>
+
+  <!-- 播放页生成模态框 -->
+  <a-modal
+    v-model:visible="playPageModalVisible"
+    title="生成播放页"
+    @ok="handleNoticeSubmit"
+    :okText="hasExistingNotice ? '更新' : '发布'"
+    cancelText="取消"
+    :confirmLoading="isSubmittingNotice"
+  >
+    <div class="play-page-form">
+      <!-- 播放页地址 -->
+      <div class="mb-4">
+        <div class="font-medium mb-2">播放页地址:</div>
+        <a-input
+          :value="playPageUrl"
+          readonly
+          class="bg-gray-50"
+        />
+      </div>
+
+      <!-- 密码输入框 -->
+      <div class="mb-4">
+        <div class="font-medium mb-2">密码:</div>
+        <a-input
+          v-model:value="noticeForm.password"
+          placeholder="请输入密码"
+          type="password"
+        />
+      </div>
+
+      <!-- 公告输入区域 -->
+      <div class="mb-4">
+        <div class="font-medium mb-2">公告:</div>
+        <a-textarea
+          v-model:value="noticeForm.content"
+          placeholder="请输入公告内容"
+          :rows="4"
+        />
+      </div>
+    </div>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -229,9 +271,79 @@ const getVideoDetails = async (vcode: string) => {
   }
 };
 
-const generatePlayPage = () => {
-  // TODO: 实现生成播放页的逻辑
-  message.info('生成播放页功能开发中');
+// 新增的响应式变量
+const playPageModalVisible = ref(false);
+const isSubmittingNotice = ref(false);
+const hasExistingNotice = ref(false);
+const noticeForm = ref({
+  password: '',
+  content: '',
+  vcode: ''
+});
+
+// 计算播放页URL
+const playPageUrl = computed(() => {
+  if (!videoCode.value) return '';
+  return `${window.location.origin}/movie/${videoCode.value}`;
+});
+
+// 获取公告信息
+const getNoticeInfo = async (vcode: string) => {
+  try {
+    const response = await axios.get(API.getNotice(vcode));
+    if (response.data) {
+      noticeForm.value.content = response.data.content;
+      hasExistingNotice.value = true;
+    } else {
+      hasExistingNotice.value = false;
+    }
+  } catch (error) {
+    hasExistingNotice.value = false;
+  }
+};
+
+// 处理公告提交
+const handleNoticeSubmit = async () => {
+  if (!noticeForm.value.content.trim()) {
+    message.error('请输入公告内容');
+    return;
+  }
+
+  if (!noticeForm.value.password.trim()) {
+    message.error('请输入密码');
+    return;
+  }
+
+  isSubmittingNotice.value = true;
+  try {
+    const payload = {
+      content: noticeForm.value.content,
+      vcode: videoCode.value,
+      password: noticeForm.value.password
+    };
+
+    const api = hasExistingNotice.value ? API.updateNotice(videoCode.value) : API.createNotice;
+    const response = await axios.put(api, payload);
+    
+    message.success(hasExistingNotice.value ? '公告更新成功' : '公告发布成功');
+    playPageModalVisible.value = false;
+  } catch (error) {
+    message.error('操作失败，请检查密码是否正确');
+  } finally {
+    isSubmittingNotice.value = false;
+  }
+};
+
+// 修改现有的 generatePlayPage 函数
+const generatePlayPage = async () => {
+  if (!videoCode.value) {
+    message.error('视频代码不存在');
+    return;
+  }
+  
+  noticeForm.value.vcode = videoCode.value;
+  await getNoticeInfo(videoCode.value);
+  playPageModalVisible.value = true;
 };
 
 onMounted(async () => {
@@ -253,5 +365,9 @@ onMounted(async () => {
 
 .quality-list {
   @apply flex flex-wrap justify-end;
+}
+
+.play-page-form {
+  @apply space-y-4;
 }
 </style>

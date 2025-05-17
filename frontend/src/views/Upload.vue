@@ -6,6 +6,7 @@
       <!-- 添加使用说明部分 -->
       <div class="bg-blue-50 rounded-lg p-4 text-sm space-y-2">
         <h2 class="font-medium text-blue-700">网站使用说明：</h2>
+
         <div class="text-blue-600">
           <p class="mb-2">📤 <span class="font-medium">文件上传与分享：</span></p>
           <ul class="list-disc list-inside pl-4 space-y-1">
@@ -25,6 +26,21 @@
             <li>在播放页URL后添加 <code class="bg-blue-100 px-1 rounded">?action=create</code> 可自动创建观看房间</li>
             <li>在播放页URL后添加 <code class="bg-blue-100 px-1 rounded">?action=join</code> 可自动加入观看房间</li>
           </ul>
+          <!-- 添加 GitHub 引流提示 -->
+          <div class="bg-gray-50 rounded text-black p-3 mb-3 border border-gray-200">
+              <span class="mr-2">⭐</span>
+              <span>
+                喜欢这个项目？欢迎在 
+                <a 
+                  href="https://github.com/zkeq/shareFilePublic" 
+                  target="_blank" 
+                  class="text-blue-600 hover:text-blue-800 font-medium mx-1"
+                >
+                  GitHub
+                </a> 
+                上给我们一个 Star！
+              </span>
+          </div>
         </div>
       </div>
 

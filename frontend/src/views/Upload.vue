@@ -3,51 +3,11 @@
     <div class="max-w-[840px] w-full border border-gray-200 rounded-xl bg-white p-4 sm:p-6 space-y-4 sm:space-y-6">
       <h1 class="text-xl sm:text-2xl text-gray-800 text-center">Zkeq 和 Ta 的朋友们 的 文件分享服务站</h1>
       
-      <!-- 添加使用说明部分 -->
-      <div class="bg-blue-50 rounded-lg p-4 text-sm space-y-2">
-        <h2 class="font-medium text-blue-700">网站使用说明：</h2>
-
-        <div class="text-blue-600">
-          <p class="mb-2">📤 <span class="font-medium">文件上传与分享：</span></p>
-          <ul class="list-disc list-inside pl-4 space-y-1">
-            <li>上传文件后，点击"分享"按钮可生成分享链接</li>
-            <li>点击"复制链接"可直接复制文件直链</li>
-            <li class="text-red-500 font-medium">注意：上传后文件不可删除，请谨慎上传！</li>
-          </ul>
-
-          <p class="mt-3 mb-2">🎥 <span class="font-medium">视频转码功能：</span></p>
-          <ul class="list-disc list-inside pl-4 space-y-1">
-            <li>上传视频文件后，点击右下角的"提交任务"按钮即可提交转码任务</li>
-            <li>转码完成后将自动生成播放页面</li>
-          </ul>
-
-          <p class="mt-3 mb-2">👥 <span class="font-medium">多人观看功能：</span></p>
-          <ul class="list-disc list-inside pl-4 space-y-1">
-            <li>在播放页URL后添加 <code class="bg-blue-100 px-1 rounded">?action=create</code> 可自动创建观看房间</li>
-            <li>在播放页URL后添加 <code class="bg-blue-100 px-1 rounded">?action=join</code> 可自动加入观看房间</li>
-          </ul>
-          <!-- 添加 GitHub 引流提示 -->
-          <div class="bg-gray-50 rounded text-black p-3 mb-3 border border-gray-200">
-              <span class="mr-2">⭐</span>
-              <span>
-                喜欢这个项目？欢迎在 
-                <a 
-                  href="https://github.com/zkeq/shareFilePublic" 
-                  target="_blank" 
-                  class="text-blue-600 hover:text-blue-800 font-medium mx-1"
-                >
-                  GitHub
-                </a> 
-                上给我们一个 Star！
-              </span>
-          </div>
-        </div>
-      </div>
-
       <p class="text-gray-600 text-xs sm:text-sm pb-2 sm:pb-4">
         <span class="text-blue-500">Tips：</span>
         本工具存在的作用就是用来传输一些文件 可以代替U盘或者微信来使用 会很方便
       </p>
+      
       <a-upload-dragger
         v-model:fileList="uploadingList"
         name="file"
@@ -66,8 +26,6 @@
           支持单个或批量上传，单个文件最大支持100GB，再大的话其实也可以上传
         </p>
       </a-upload-dragger>
-  
-      
     </div>
     
     <!-- 添加统计卡片 -->
@@ -181,6 +139,59 @@
       </div>
       <a-empty v-else description="暂无文件" />
     </div>
+
+    <!-- 添加公告模态框 -->
+    <a-modal
+      v-model:visible="showAnnouncement"
+      title="网站使用说明"
+      :footer="null"
+      :maskClosable="false"
+      centered
+      class="announcement-modal"
+    >
+      <div class="space-y-4">
+        <div class="text-blue-600">
+          <p class="mb-2">📤 <span class="font-medium">文件上传与分享：</span></p>
+          <ul class="list-disc list-inside pl-4 space-y-1">
+            <li>上传文件后，点击"分享"按钮可生成分享链接</li>
+            <li>点击"复制链接"可直接复制文件直链</li>
+            <li class="text-red-500 font-medium">注意：上传后文件不可删除，请谨慎上传！</li>
+          </ul>
+
+          <p class="mt-3 mb-2">🎥 <span class="font-medium">视频转码功能：</span></p>
+          <ul class="list-disc list-inside pl-4 space-y-1">
+            <li>上传视频文件后，点击右下角的"提交任务"按钮即可提交转码任务</li>
+            <li>转码完成后将自动生成播放页面</li>
+          </ul>
+
+          <p class="mt-3 mb-2">👥 <span class="font-medium">多人观看功能：</span></p>
+          <ul class="list-disc list-inside pl-4 space-y-1">
+            <li>在播放页URL后添加 <code class="bg-blue-100 px-1 rounded">?action=create</code> 可自动创建观看房间</li>
+            <li>在播放页URL后添加 <code class="bg-blue-100 px-1 rounded">?action=join</code> 可自动加入观看房间</li>
+          </ul>
+
+          <div class="bg-gray-50 rounded text-black p-3 mt-4 border border-gray-200">
+            <span class="mr-2">⭐</span>
+            <span>
+              喜欢这个项目？欢迎在 
+              <a 
+                href="https://github.com/zkeq/shareFilePublic" 
+                target="_blank" 
+                class="text-blue-600 hover:text-blue-800 font-medium mx-1"
+              >
+                GitHub
+              </a> 
+              上给我们一个 Star！
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex justify-end space-x-2 mt-6">
+        <a-button @click="closeAnnouncement(false)">关闭本次</a-button>
+        <a-button type="primary" @click="closeAnnouncement(true)">永久关闭</a-button>
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -222,6 +233,9 @@ const showGlobal = ref({
   files: false,
   size: false
 });
+
+// 添加公告相关状态
+const showAnnouncement = ref(false);
 
 // 从localStorage加载文件列表
 const loadFileList = () => {
@@ -627,11 +641,24 @@ const batchShare = async () => {
   }
 };
 
-// 生命周期钩子
+// 关闭公告方法
+const closeAnnouncement = (permanent: boolean) => {
+  showAnnouncement.value = false;
+  if (permanent) {
+    localStorage.setItem('hideAnnouncement', 'true');
+  }
+};
+
+// 修改 onMounted 钩子
 onMounted(async () => {
-  loadFileList(); // 加载保存的文件列表
+  // 检查是否显示公告
+  const hideAnnouncement = localStorage.getItem('hideAnnouncement');
+  if (!hideAnnouncement) {
+    showAnnouncement.value = true;
+  }
+  loadFileList();
   fetchGlobalStats();
-  await fetchAllFileStats(); // 获取所有文件的统计数据
+  await fetchAllFileStats();
 });
 
 // 定时更新统计数据
@@ -663,6 +690,19 @@ onUnmounted(() => {
   .ant-btn {
     padding: 4px 8px;
     height: 32px;
+  }
+}
+
+/* 添加模态框样式 */
+:deep(.announcement-modal) {
+  max-width: 90vw;
+  width: 600px !important;
+}
+
+@media (max-width: 640px) {
+  :deep(.announcement-modal) {
+    max-width: 95vw;
+    margin: 0 auto;
   }
 }
 </style>

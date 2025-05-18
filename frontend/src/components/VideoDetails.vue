@@ -24,8 +24,8 @@
     <!-- 视频详情信息 -->
     <div v-if="taskStatus === '已上传'" class="video-details-content">
       <!-- 视频封面和基本信息 -->
-      <div class="flex gap-6 mb-6">
-        <div class="video-thumbnail w-64 h-36 relative overflow-hidden rounded-lg bg-gray-100">
+      <div class="flex flex-col md:flex-row gap-6 mb-6">
+        <div class="video-thumbnail w-full md:w-64 h-48 md:h-36 relative overflow-hidden rounded-lg bg-gray-100">
           <template v-if="videoInfo.thumbnail">
             <img :src="videoInfo.thumbnail" class="w-full h-full object-cover" :alt="videoInfo.name" />
           </template>
@@ -37,7 +37,7 @@
           </template>
         </div>
         <div class="flex-1">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div class="info-item">
               <span class="font-medium">视频ID：</span>
               <span>{{ videoInfo.vid }}</span>
@@ -69,7 +69,7 @@
       <!-- 转码版本 -->
       <div class="transcode-versions">
         <h4 class="text-base font-medium mb-4">转码版本</h4>
-        <div class="grid grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <div v-for="quality in videoInfo.vtypes" :key="quality.vtype" 
                class="version-card p-3 border rounded-lg">
             <div class="flex justify-between items-center mb-2">
@@ -101,6 +101,7 @@
     :okText="hasExistingNotice ? '更新' : '发布'"
     cancelText="取消"
     :confirmLoading="isSubmittingNotice"
+    class="mobile-modal"
   >
     <div class="play-page-form">
       <!-- 播放页地址 -->
@@ -392,11 +393,11 @@ onMounted(async () => {
 
 <style scoped>
 .video-details {
-  @apply bg-white rounded-lg overflow-hidden;
+  @apply bg-white rounded-lg overflow-hidden px-4 md:px-6;
 }
 
 .info-item {
-  @apply p-2 bg-gray-50 rounded;
+  @apply p-2 bg-gray-50 rounded text-sm md:text-base;
 }
 
 .quality-list {
@@ -405,5 +406,41 @@ onMounted(async () => {
 
 .play-page-form {
   @apply space-y-4;
+}
+
+/* 添加移动端样式 */
+@media (max-width: 640px) {
+  .video-details {
+    @apply px-3;
+  }
+  
+  .info-item {
+    @apply p-2;
+  }
+  
+  .version-card {
+    @apply text-sm;
+  }
+}
+
+/* 移动端模态框样式 */
+:deep(.mobile-modal) {
+  @apply w-11/12 md:w-auto max-w-lg;
+  
+  .ant-modal-content {
+    @apply p-4;
+  }
+  
+  .ant-modal-header {
+    @apply pb-3;
+  }
+  
+  .ant-modal-body {
+    @apply py-3;
+  }
+  
+  .ant-modal-footer {
+    @apply pt-3;
+  }
 }
 </style>

@@ -214,7 +214,7 @@ onBeforeUnmount(() => {
 <style>
 
 .dplayer.dplayer-mobile .dplayer-controller .dplayer-icons .dplayer-play-icon {
-    display: inline-block;
+    display: inline-block !important;
 }
 
 </style>

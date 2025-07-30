@@ -1,5 +1,9 @@
 # ShareFile Public
 
+![image-20250730201541564](https://img.onmicrosoft.cn/zkeq/20250730201541666.png)
+
+![image-20250730201551642](https://img.onmicrosoft.cn/zkeq/20250730201551748.png)
+
 Wiki：https://deepwiki.com/zkeq/shareFilePublic
 
 一个基于多吉云的现代化文件分享平台，支持视频处理和在线预览功能。 （已支持视频转码+一起看功能）
